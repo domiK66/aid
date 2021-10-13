@@ -1,0 +1,7 @@
+{
+    "name": "kainzdom19/php-redis",
+    "license": "Apache2",
+    "require": {
+        "predis/predis" : "^1.1.6"
+    }
+}
