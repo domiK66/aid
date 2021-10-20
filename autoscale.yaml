@@ -9,7 +9,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: redis-follower
-  targetCPUUtilizationPercentage: 50 # target CPU utilization
+  targetCPUUtilizationPercentage: 2
 
 ---
 
@@ -24,4 +24,4 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: frontend
-  targetCPUUtilizationPercentage: 50 # target CPU utilization
+  targetCPUUtilizationPercentage: 2 # target CPU utilization
