@@ -1,6 +1,101 @@
-# frontend-deployment
+# redis-leader-service
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-leader
+  labels:
+    app: redis
+    role: leader
+    tier: backend
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+  selector:
+    app: redis
+    role: leader
+    tier: backend
+    
+# redis-leader-deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-leader
+  labels:
+    app: redis
+    role: leader
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+        role: leader
+        tier: backend
+    spec:
+      containers:
+      - name: leader
+        image: "docker.io/redis:6.0.5"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 6379
+    
+# redis-follower-deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-follower
+  labels:
+    app: redis
+    role: follower
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+        role: follower
+        tier: backend
+    spec:
+      containers:
+      - name: follower
+        image: gcr.io/google_samples/gb-redis-follower:v2
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 6379
+        
+# redis-follower-service
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-follower
+  labels:
+    app: redis
+    role: follower
+    tier: backend
+spec:
+  ports:
+  - port: 6379
+  selector:
+    app: redis
+    role: follower
+    tier: backend
 
-# SOURCE: https://cloud.google.com/kubernetes-engine/docs/tutorials/guestbook
+
+# frontend-deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -45,102 +140,6 @@ spec:
   selector:
     app: guestbook
     tier: frontend
-    
-# redis-leader-deployment
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: redis-leader
-  labels:
-    app: redis
-    role: leader
-    tier: backend
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: redis
-  template:
-    metadata:
-      labels:
-        app: redis
-        role: leader
-        tier: backend
-    spec:
-      containers:
-      - name: leader
-        image: "docker.io/redis:6.0.5"
-        resources:
-          requests:
-            cpu: 100m
-            memory: 100Mi
-        ports:
-        - containerPort: 6379
-# redis-leader-service
-apiVersion: v1
-kind: Service
-metadata:
-  name: redis-leader
-  labels:
-    app: redis
-    role: leader
-    tier: backend
-spec:
-  ports:
-  - port: 6379
-    targetPort: 6379
-  selector:
-    app: redis
-    role: leader
-    tier: backend
-    
-# redis-follower-deplyoment
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: redis-follower
-  labels:
-    app: redis
-    role: follower
-    tier: backend
-spec:
-  selector:
-    matchLabels:
-      app: redis
-  template:
-    metadata:
-      labels:
-        app: redis
-        role: follower
-        tier: backend
-    spec:
-      containers:
-      - name: follower
-        image: gcr.io/google_samples/gb-redis-follower:v2
-        resources:
-          requests:
-            cpu: 100m
-            memory: 100Mi
-        ports:
-        - containerPort: 6379
-        
-# redis-follower-service
-apiVersion: v1
-kind: Service
-metadata:
-  name: redis-follower
-  labels:
-    app: redis
-    role: follower
-    tier: backend
-spec:
-  ports:
-    # the port that this service should serve on
-  - port: 6379
-  selector:
-    app: redis
-    role: follower
-    tier: backend
 
 # autoscaling config
 apiVersion: autoscaling/v1
