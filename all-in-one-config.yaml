@@ -15,7 +15,7 @@ spec:
     app: redis
     role: leader
     tier: backend
-    
+--- 
 # redis-leader-deployment
 apiVersion: apps/v1
 kind: Deployment
@@ -46,7 +46,24 @@ spec:
             memory: 100Mi
         ports:
         - containerPort: 6379
-    
+--- 
+# redis-follower-service
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-follower
+  labels:
+    app: redis
+    role: follower
+    tier: backend
+spec:
+  ports:
+  - port: 6379
+  selector:
+    app: redis
+    role: follower
+    tier: backend
+--- 
 # redis-follower-deployment
 apiVersion: apps/v1
 kind: Deployment
@@ -76,25 +93,23 @@ spec:
             memory: 100Mi
         ports:
         - containerPort: 6379
-        
-# redis-follower-service
+---
+# frontend-service
 apiVersion: v1
 kind: Service
 metadata:
-  name: redis-follower
+  name: frontend
   labels:
-    app: redis
-    role: follower
-    tier: backend
+    app: guestbook
+    tier: frontend
 spec:
-  ports:
-  - port: 6379
+  type: LoadBalancer
+  ports: # the port that this service should serve on
+  - port: 80
   selector:
-    app: redis
-    role: follower
-    tier: backend
-
-
+    app: guestbook
+    tier: frontend
+--- 
 # frontend-deployment
 apiVersion: apps/v1
 kind: Deployment
@@ -124,23 +139,7 @@ spec:
         ports:
         - containerPort: 80
         imagePullPolicy: Always
-        
-# frontend-service
-apiVersion: v1
-kind: Service
-metadata:
-  name: frontend
-  labels:
-    app: guestbook
-    tier: frontend
-spec:
-  type: LoadBalancer
-  ports: # the port that this service should serve on
-  - port: 80
-  selector:
-    app: guestbook
-    tier: frontend
-
+--- 
 # autoscaling config
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
@@ -154,9 +153,7 @@ spec:
     kind: Deployment
     name: redis-follower
   targetCPUUtilizationPercentage: 2
-
 ---
-
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
@@ -169,4 +166,3 @@ spec:
     kind: Deployment
     name: frontend
   targetCPUUtilizationPercentage: 2 # target CPU utilization
-  
