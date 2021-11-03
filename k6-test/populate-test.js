@@ -3,10 +3,10 @@ import http from 'k6/http';
 import { sleep } from 'k6';
 
 export default function () {
-  let url = "http://20.103.17.59/guestbook.php?cmd=set&value=,Dominiks,Loadtest";
+  const BASE_URL = 'http://34.140.134.66/';
+  let url = `${BASE_URL}/guestbook.php?cmd=set&value=,Dominiks,Populatetest`;
   for (let i = 0; i < 1000; i++) { 
-    let params = http.get("http://20.103.17.59/guestbook.php?cmd=get")
-    url += params + "," + i.toString()
+    url += "," + i.toString()
     http.get(url);
     sleep(1);
   }
