@@ -1,5 +1,5 @@
 # AID: Application Infrastructure Design
-* Platform as a Service: Guestbook Application in php & angular.js
+* Platform as a Service: Guestbook Application in php & jscript
 * Cloud scalability
 * Kubernetes (K8s)
 * Microsoft Azure and Google Cloud
