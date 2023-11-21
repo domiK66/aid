@@ -12,5 +12,5 @@ class WebsiteUser(HttpUser):
 
     @task(2)
     def post(self):
-        self.client.post(f$"/guestbook.php?cmd=set&value=,Robert {self.number}", headers=default_headers)
+        self.client.post(f"/guestbook.php?cmd=set&value=,Robert {self.number}", headers=default_headers)
         self.number += 1    
