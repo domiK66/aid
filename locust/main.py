@@ -7,10 +7,8 @@ class WebsiteUser(HttpUser):
 
     @task(1)
     def get_index(self):
-        self.client.get("/", headers=default_headers)
+        self.client.get("/guestbook.php?cmd=get", headers=default_headers)
 
-    
-    # @task(2)
-   # def post(self):
-     #   self.client.post("/guestbook.php?cmd=set&value=,Dominik,Kainz", headers=default_headers)
-    
+    @task(2)
+    def post(self):
+        self.client.post("/guestbook.php?cmd=set&value=,Dominik,Kainz", headers=default_headers)
